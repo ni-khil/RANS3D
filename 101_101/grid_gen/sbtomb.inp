@@ -1,0 +1,8 @@
+NSEGI    NSEGJ
+2        2 
+IC(I)    I = 1,NSEGI
+1         201  
+JC(J)    J = 1,NSEGJ
+1         201
+PERIODI   PERIODJ
+.FALSE.   .FALSE.

@@ -1,0 +1,416 @@
+C***********************************************************************
+C
+      SUBROUTINE BLOKCON
+C
+C     CORRECT EXIT VELOCITIES AND CONVECTIVE MASS FLUXES AT CELL 
+C     FACES WITH OUTFLOW STATE TO ENSURE OVERALL MASS CONSERVATION
+C     FOR THE BLOCK         
+C
+C***********************************************************************
+C
+      INCLUDE 'com2d'                                              
+C
+c	if (ibswp .eq. 1) florat=0
+	if (iblk .eq. 1) then
+            FLWOUT=0.                                                         
+            FLWIN= 0.            
+	end if
+C
+C  LOOP TO BE SET UP FOR ALL THE BOUNDARIES OF THE BLOCK
+C
+             do nbound=1,nrbnda
+
+               if (cbnd(nbound,2)(1:2).eq. 'IN' .or.
+     >                      cbnd(nbound,2)(1:2).eq. 'OU') then
+               if (cbnd(nbound,1)(1:2).eq. 'WE') then
+               
+               is=nbnd(nbound,1)
+               ie=nbnd(nbound,2)
+               js=nbnd(nbound,3)
+               je=nbnd(nbound,4)
+              
+                 DO j=js,je
+                 DO i=is,ie 
+                 II=I+(j-1)*NI
+                 CWII=F(ISCW+II)
+                 FLWIN=FLWIN+MAX(0.,CWII)
+                 FLWOUT=FLWOUT-MIN(0.,CWII)
+                 END DO
+                 END DO
+		end if
+
+               if (cbnd(nbound,1)(1:2).eq. 'EA') then
+               
+               is=nbnd(nbound,1)+1
+               ie=nbnd(nbound,2)+1
+               js=nbnd(nbound,3)
+               je=nbnd(nbound,4)
+              
+                 DO j=js,je
+                 DO i=is,ie
+                 II=I+(j-1)*NI
+                 CWII=F(ISCW+II)
+                 FLWIN=FLWIN-MIN(0.,CWII)
+                 FLWOUT=FLWOUT+MAX(0.,CWII)
+                 END DO
+                 END DO
+		end if
+                
+          if (cbnd(nbound,1)(1:2).eq. 'SO') then
+               
+               js=nbnd(nbound,3)
+               je=nbnd(nbound,4)
+               is=nbnd(nbound,1)
+               ie=nbnd(nbound,2)
+
+               DO j=js,je
+               DO i=is,ie 
+                 II=I+(j-1)*NI
+                 CSII=F(ISCS+II)
+                 FLWIN=FLWIN+MAX(0.,CSII)
+                 FLWOUT=FLWOUT-MIN(0.,CSII)
+                END DO
+                END DO
+		end if
+
+            if (cbnd(nbound,1)(1:2).eq. 'NO') then
+               js=nbnd(nbound,3)+1
+               je=nbnd(nbound,4)+1
+               is=nbnd(nbound,1)
+               ie=nbnd(nbound,2)
+
+               DO j=js,je
+               DO i=is,ie
+                 II=I+(j-1)*NI
+                 CSII=F(ISCS+II)
+                 FLWIN=FLWIN-MIN(0.,CSII)
+                 FLWOUT=FLWOUT+MAX(0.,CSII)
+                END DO
+                END DO
+		end if
+		end if ! End of INF Check
+	   end do !end of nbound loop
+C
+C EVALUATION OF THE CORRECTION FACTOR AS MULTIPLIER
+C
+	if (iblk .eq. nblock) then
+        if (flwout .le. 0. .or. flwin .le. 0. )then
+           FLORAT=1.
+        else
+           FLORAT=FLWIN/FLWOUT
+        end if
+	end if
+
+       IF(MOD(NITER,1).EQ.0) THEN
+       WRITE(6,*)'FLOWIN=',flwin,'FLOWOUT=',FLWOUT,'FACT=',FLORAT
+       END IF
+	if (ibswp .eq. 1 .and. ntstep .eq.1) florat=1.
+
+
+C       IF (.NOT. OVACOR .or. ibswp .eq. 1) return
+        IF (.NOT. OVACOR) return
+
+C
+C --- CORRECT  CONVECTIVE FLUXES AT THE BOUNDARY FACES
+C     BEHAVING AS OUT FLOW ONLY
+C   
+
+C
+C  LOOP TO BE SET UP FOR ALL THE BOUNDARIES OF THE BLOCK
+C
+             do nbound=1,nrbnda
+
+               if (cbnd(nbound,2)(1:2).eq. 'IN' .or.
+     >                      cbnd(nbound,2)(1:2).eq. 'OU') then
+               if (cbnd(nbound,1)(1:2).eq. 'WE') then
+               
+               is=nbnd(nbound,1)
+               ie=nbnd(nbound,2)
+               js=nbnd(nbound,3)
+               je=nbnd(nbound,4)
+              
+                 DO j=js,je
+                 DO i=is,ie 
+                 II=I+(j-1)*NI
+                 CWII=F(ISCW+II)
+                 RAT=1.
+                 IF(CWII.LE.0.) RAT=FLORAT
+		 F(ISU+II-1)=F(ISU+II-1)*RAT
+		 F(ISV+II-1)=F(ISV+II-1)*RAT
+                 F(ISCW+II)=F(ISCW+II)*RAT
+                 END DO
+                 END DO
+		end if
+                
+               if (cbnd(nbound,1)(1:2).eq. 'EA') then
+               
+               is=nbnd(nbound,1)+1
+               ie=nbnd(nbound,2)+1
+               js=nbnd(nbound,3)
+               je=nbnd(nbound,4)
+              
+                 DO j=js,je
+                 DO i=is,ie
+                 II=I+(j-1)*NI
+                 CWII=F(ISCW+II)
+                 RAT=1.
+                 IF(CWII.GE.0.) RAT=FLORAT
+		 F(ISU+II)=F(ISU+II)*RAT
+		 F(ISV+II)=F(ISV+II)*RAT
+                 F(ISCW+II)=F(ISCW+II)*RAT
+                 END DO
+                 END DO
+		end if
+
+          if (cbnd(nbound,1)(1:2).eq. 'SO') then
+               
+               js=nbnd(nbound,3)
+               je=nbnd(nbound,4)
+               is=nbnd(nbound,1)
+               ie=nbnd(nbound,2)
+
+               DO j=js,je
+               DO i=is,ie 
+                 II=I+(j-1)*NI
+                 CSII=F(ISCS+II)
+                 RAT=1.
+                 IF(CSII.LE.0.) RAT=FLORAT
+		 F(ISU+II-NI)=F(ISU+II-NI)*RAT
+		 F(ISV+II-NI)=F(ISV+II-NI)*RAT
+                 F(ISCS+II)=F(ISCS+II)*RAT
+                END DO
+                END DO
+		end if
+
+            if (cbnd(nbound,1)(1:2).eq. 'NO') then
+               js=nbnd(nbound,3)+1
+               je=nbnd(nbound,4)+1
+               is=nbnd(nbound,1)
+               ie=nbnd(nbound,2)
+
+               DO j=js,je
+               DO i=is,ie
+                 II=I+(j-1)*NI
+                 CSII=F(ISCS+II)
+                 RAT=1.
+                 IF(CSII.GE.0.) RAT=FLORAT
+		 F(ISU+II)=F(ISU+II)*RAT
+		 F(ISV+II)=F(ISV+II)*RAT
+                 F(ISCS+II)=F(ISCS+II)*RAT
+                END DO
+                END DO
+		end if
+		end if ! End of INF Check
+	   end do !end of nbound loop
+
+        RETURN                                                            
+      END                                                               
+C
+C***********************************************************************
+C
+      SUBROUTINE BLOKCON_OLD                                                 
+C
+C     CORRECT EXIT VELOCITIES TO ENSURE OVERALL MASS CONSERVATION          
+C
+C***********************************************************************
+C
+      INCLUDE 'com2d'                                              
+C
+
+	if (ibswp .eq. 1) florat=0
+	if (iblk .eq. 1) then
+      FLWOUT=0.                                                         
+      FLWIN= 0.            
+	end if
+      flwin=flwin+rnorm(1)       
+
+c	write(1234,*)iblk,ibswp,flwin
+
+C
+C COMPUTE THE FLWOUT FOR THE EXIT BOUNDARY
+C
+      IF(MEXIW.NE.0) then
+        FLWSUM=0.                                                       
+        DO  IM=1,MEXIW                                               
+               IP=INEXW(IM)                                             
+               IB=IP-1                                                  
+               RW=F(ISFX+IP)*F(ISR+IP)+(1.-F(ISFX+IP))*F(ISR+IB)        
+        FLWSUM=FLWSUM+F(ISDEN+IB)*RW*(F(ISU+IB)*F(ISB11W+IP)            
+     >                               +F(ISV+IB)*F(ISB12W+IP))*mysolv(ip)
+        FLWSUM=FLWSUM-F(ISDEN+IB)*RW*(xdot(ib)*F(ISB11W+IP)            
+     >                               +ydot(ib)*F(ISB12W+IP))*mysolv(ip)
+        end do
+        FLWOUT=FLWOUT+ABS(FLWSUM)                                       
+      end if
+C
+      IF(MEXIE.NE.0) then 
+        FLWSUM=0.                                                       
+        DO IM=1,MEXIE                                               
+               IP=INEXE(IM)                                             
+               IB=IP+1                                                  
+               RE=F(ISFX+IB)*F(ISR+IB)+(1.-F(ISFX+IB))*F(ISR+IP)        
+        FLWSUM=FLWSUM+F(ISDEN+IB)*RE*(F(ISU+IB)*F(ISB11W+IB)            
+     >                               +F(ISV+IB)*F(ISB12W+IB))*mysolv(ip)
+        FLWSUM=FLWSUM-F(ISDEN+IB)*RE*(xdot(ib)*F(ISB11W+IB)            
+     >                               +ydot(ib)*F(ISB12W+IB))*mysolv(ip)
+        end do
+        FLWOUT=FLWOUT+ABS(FLWSUM)                                       
+      end if
+C
+      IF(MEXIS.NE.0) then
+        FLWSUM=0.                                                       
+        DO IM=1,MEXIS                                               
+               IP=INEXS(IM)                                             
+               IB=IP-NI                                                 
+               RS=F(ISFY+IP)*F(ISR+IP)+(1.-F(ISFY+IP))*F(ISR+IB)        
+        FLWSUM=FLWSUM+F(ISDEN+IB)*RS*(F(ISU+IB)*F(ISB21S+IP)            
+     >                               +F(ISV+IB)*F(ISB22S+IP))*mysolv(ip)
+        FLWSUM=FLWSUM-F(ISDEN+IB)*RS*(xdot(ib)*F(ISB21S+IP)            
+     >                               +ydot(ib)*F(ISB22S+IP))*mysolv(ip)
+        end do
+        FLWOUT=FLWOUT+ABS(FLWSUM)                                       
+      end if
+C
+      IF(MINLN.NE.0) then
+        FLWSUM=0.                                                       
+        DO  IM=1,MINLN                                               
+               IP=INLEN(IM)                                             
+               IB=IP+NI                                                 
+               RN=F(ISFY+IB)*F(ISR+IB)+(1.-F(ISFY+IB))*F(ISR+IP)        
+        CN=F(ISDEN+IB)*RN*(F(ISU+IB)*F(ISB21S+IB)            
+     >                               +F(ISV+IB)*F(ISB22S+IB))*mysolv(ip)
+	if (cn .gt. 0) then
+
+	flwsum=flwsum+cn
+        FLWSUM=FLWSUM-F(ISDEN+IB)*RN*(xdot(ib)*F(ISB21S+IB)            
+     >                               +ydot(ib)*F(ISB22S+IB))*mysolv(ip)
+	end if
+        end do
+        FLWOUT=FLWOUT+FLWSUM                                       
+      end if
+C
+C  COMPUTE THE FLWIN AND FLWOUT FOR CUT BOUNDARY
+C
+      IF(MCUTN.NE.0) then
+	fcutn=0.
+        DO IM=1,MCUTN                                               
+              IP=ICUTN(IM)                                           
+              IB=IP+NI                                           
+              CN=F(ISCS+IB)*mysolv(ip)
+              CN_DOT=csdot(ib)*mysolv(ip)
+	      fcutn=fcutn+cn-cn_dot
+                flwin=flwin-(cn-cn_dot)
+	end do
+c	if(niter.eq.maxit)
+c     >	write(100,*)ibswp,iblk,'flow on cut at north',fcutn
+      end if
+C
+      IF(MCUTS.NE.0) then
+	fcuts=0.
+        DO IM=1,MCUTS                                               
+              IP=ICUTS(IM)                                              
+              IB=IP-NI                                                  
+              CS=F(ISCS+IP)*mysolv(ip)
+              CS_DOT=csdot(ip)*mysolv(ip)
+	       fcuts=fcuts+cs-cs_dot
+                 flwin=flwin+(cs-cs_dot)
+	end do	
+c	if(niter.eq.maxit)
+c     > 	 write(100,*)ibswp,iblk,'flow on cut at south',fcuts
+      end if
+C                                               
+
+      IF(MCUTE.NE.0) then
+	     fcute=0.
+        DO IM=1,MCUTE
+              IP=ICUTE(IM)                                            
+              IB=IP+1                                            
+              CE=F(ISCW+IB)*mysolv(ip)
+              CE_DOT=cwdot(ib)*mysolv(ip)
+	       fcute=fcute+ce-ce_dot
+                 flwin=flwin-(ce-ce_dot)
+	end do
+c	if(niter.eq.maxit)
+c     >	write(100,*)ibswp,iblk,'flow on cut at east',fcute
+      end if
+C
+        IF(MCUTW.ne.0) then 
+        fcutw=0.
+        DO IM=1,MCUTW
+              IP=ICUTW(IM)                                              
+              IB=IP-1                                                   
+              CW=(F(ISCW+IP))*mysolv(ip)
+              CW_DOT=cwdot(ip)*mysolv(ip)
+	      fcutw=fcutw+cw-cw_dot
+                flwin=flwin+(cw-cw_dot)
+	end do
+c	if(niter.eq.maxit)
+c     >	write(100,*)ibswp,iblk,'flow on cut at west',fcutw
+      end if
+
+c	write(1123,*)ibswp,iblk,rnorm(1),flwin,flwout
+
+	if (iblk .eq. nblock) then
+        if (flwout .le. 0. .or. flwin .le. 0. )then 
+          florat=1.
+        else
+          florat=flwin/FLWOUT                                              
+        end if  
+	end if
+
+	factor=florat
+
+
+C
+       IF(MOD(NITER,1).EQ.0) THEN
+       WRITE(6,*)'FLOWIN=',flwin,'FLOWOUT=',FLWOUT,'FACT=',FACTor
+       END IF
+
+        IF (.NOT. OVACOR .or. ibswp .eq. 1) return
+C --- CORRECT U & V AT EXIT BOUNDARY
+C   
+      IF(MEXIW.NE.0) then                                          
+        DO IM=1,MEXIW                                               
+              IB =INEXW(IM)-1                                           
+        fact=(mysolv(ib+1))*factor+(1-mysolv(ib+1))
+        F(ISU+IB)=F(ISU+IB)*FACT+xdot(ib)*(1-fact)
+        F(ISV+IB)=F(ISV+IB)*FACT+ydot(ib)*(1-fact)
+        F(ISCW+IB+1)=F(ISCW+IB+1)*FACT+cwdot(ib+1)*(1-fact)
+        end do
+      end if
+C
+      IF(MEXIE.NE.0) then                                          
+        DO IM=1,MEXIE                                               
+              IB =INEXE(IM)+1                                           
+        fact=(mysolv(ib-1))*factor+(1-mysolv(ib-1))
+        F(ISU+IB)=F(ISU+IB)*FACT+xdot(ib)*(1-fact)
+        F(ISV+IB)=F(ISV+IB)*FACT+ydot(ib)*(1-fact)
+        F(ISCW+IB)=F(ISCW+IB)*FACT+cwdot(ib)*(1-fact)
+        end do
+      end if
+C
+      IF(MEXIS.NE.0) then                                          
+        DO IM=1,MEXIS                                               
+              IB =INEXS(IM)-NI                                          
+        fact=(mysolv(ib+ni))*factor+(1-mysolv(ib+ni))
+        F(ISU+IB)=F(ISU+IB)*FACT+xdot(ib)*(1-fact)
+        F(ISV+IB)=F(ISV+IB)*FACT+ydot(ib)*(1-fact)
+        F(ISCS+IB+NI)=F(ISCS+IB+NI)*FACT+csdot(ib+ni)*(1-fact)
+        end do
+      end if
+C
+      IF(MINLN.NE.0) then                                             
+        DO IM=1,MINLN                                               
+              IB =INLEN(IM)+NI                                          
+	CN=F(ISCS+IB)
+	if (CN .GT. 0) then
+        fact=(mysolv(ib-ni))*factor+(1-mysolv(ib-ni))
+        F(ISU+IB)=F(ISU+IB)*FACT+xdot(ib)*(1-fact)
+        F(ISV+IB)=F(ISV+IB)*FACT+ydot(ib)*(1-fact)
+        F(ISCS+IB)=F(ISCS+IB)*FACT+csdot(ib)*(1-fact)
+	end if
+        end do
+      end if
+
+        RETURN                                                            
+      END                                                               

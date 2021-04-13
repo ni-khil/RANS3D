@@ -1,0 +1,2 @@
+gfortran -ffixed-line-length-none postproc.f -o post    
+

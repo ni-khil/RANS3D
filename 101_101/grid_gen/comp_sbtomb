@@ -1,0 +1,2 @@
+gfortran -ffixed-line-length-none sbtomb.f -o sbtomb 
+

@@ -1,0 +1,112 @@
+C     COMMON BLOCK FOR THE FLOW CODE                                            
+C
+      PARAMETER (NXF=102,NYF=102,NMAX=MAX(NXF,NYF),NBMAX=2) 
+C     NXF AND NYF ARE MAX. NOS OF NODES ALONG X AND Y DIRECTION
+C     NBMAX = MAXIMUM NOS. OF BLOCKS CONSIDERED
+C***********************************************************************
+      PARAMETER (NVTOT=50,IDIM1=NXF*NYF,IDIM=IDIM1*NVTOT)
+C ****     NVTOT = TOTAL NOS.OF VARIABLES   
+      PARAMETER (NRBND=9,MAXCUT=2,MAXL=2)
+      PARAMETER (SMALL=1.E-20,GREAT=1.E20)                              
+      CHARACTER CBND*6
+C ****                                                 
+      LOGICAL IREAD,IWRITE,KATO,AXISYM_X,AXISYM_Y,SWIRL,SOLVE,SPECL    
+      LOGICAL OVACOR,START_FIELD,STOP_JOB,SAMEGRID_LEVEL,INIT_FLD,CONVECTIVE_BC
+      LOGICAL REAL_IND,WRITE_EXIT,NATCONV,BUOY_SORCE,DOUBLE_PREC
+C ****                                                 
+      INTEGER TURBMOD
+C ****                                                 
+      COMMON/CONST/PI
+      COMMON F(IDIM)                                                           
+      COMMON/LOGO/IREAD,IWRITE,KATO,AXISYM_X,AXISYM_Y,SWIRL,SOLVE(11)
+     >           ,SPECL(11),OVACOR,START_FIELD,STOP_JOB,SAMEGRID_LEVEL,INIT_FLD
+     >           ,NATCONV,CONVECTIVE_BC,MOVEGRID,WRITE_EXIT,REAL_IND
+     >           ,BUOY_SORCE,DOUBLE_PREC 
+      COMMON/CTR1/EPS,RELAX(14),NITERP,IPREF,JPREF,IBREF    
+     >           ,NX,NY,NSWP(11),NSOLV(11)                           
+      COMMON/MONI/IMON,JMON,IBMON,UMON,VMON,PMON,phimon    
+      COMMON/DSCHE/FDEFER(11),NDSCH(11)                          
+      COMMON/BCOND/UIN(NRBND),VIN(NRBND),WIN(NRBND),TIN(NRBND)
+      COMMON/PROP/DENSIT,VISCOS,VISIN_FACT,ALREF,UREF,VREF,TREF,TEREF,ALPHA 
+      COMMON/TURB1/C1,C2,C3,CMU,CDQR,CDRT,CDTQ,ELOG,CAPPA,PR(11),PRLAM,REYNOLDS
+      COMMON/TURB2/PROD(IDIM1),SPFACT(11),BESUC(IDIM1),BESPC(IDIM1),
+     >             VORTIC(IDIM1),STRN(IDIM1)                       
+      COMMON/TURB3/CL1,AEPS,AMU,RAYLEIGH,GK(IDIM1)         
+      COMMON/TURB4/BETA,GAMMA        
+      COMMON/TURB5/C1F,C2F,CL,CETA,ENN,C_EPS,SMIN(IDIM1)     
+      COMMON/TURB6/CB1,CB2,CV1,CW1,CW2,CW3     
+      COMMON/TURB7/BETA1,BETA2,BETA_STR,GAMA1,GAMA2,A1,CDKW
+      COMMON/EXTRATURB7/PR1_TE,PR2_TE,PR1_OM,PR2_OM
+      COMMON/ISIE/IIS,IIE,ISOLV,ISOLV_B,ISOLV_E,JSOLV_B,JSOLV_E
+      COMMON/GRVAR/NV(NVTOT),NI,NJ,NIM,NJM,NIJ 
+      COMMON/MBLOK/IBSWP,NBSWP_END,IBLK,NBLOCK,NOCUT,NBBLK(NRBND),
+     >             nbcutn(nrbnd),ndir(nrbnd),nbswp_st,ibswp_no	
+      COMMON/CTR2/NITER,NSYME,NSYMW,NSYMN,NSYMS,INFDE(100)     
+     >           ,IDEBUG                                  
+      COMMON/RESUM/RMOM(11),RNORM(11),GLOBRS(11),GNORM(11),RESD(11,IDIM1),
+     >             LINKPV,RESMAX,FLWIN,FLWOUT,FLORAT
+      COMMON/TT/ISKP,JSKP                                             
+      COMMON/GEOMETRY/COX(NXF,NYF),COY(NXF,NYF),XCENT(IDIM1),YCENT(IDIM1)
+      COMMON/BND1/KN(IDIM1),KS(IDIM1),KE(IDIM1),KW(IDIM1),KBLK(IDIM1)   
+     >           ,MYSOLV(IDIM1),IBLOC,NRBNDA,NBND(NRBND,4),IWAL(IDIM1), 
+     >            IWFLAG(IDIM1)                           
+C
+      COMMON/BND2/INDWN(IDIM1),INDWS(IDIM1),INDWE(IDIM1),INDWW(IDIM1)   
+     >           ,INSYN(IDIM1),INSYS(IDIM1),INSYE(IDIM1),INSYW(IDIM1)   
+     >           ,INEXN(IDIM1),INEXS(IDIM1),INEXE(IDIM1),INEXW(IDIM1)   
+     >           ,INLEN(IDIM1),INLES(IDIM1),INLEE(IDIM1),INLEW(IDIM1) 
+     >           ,ICUTN(IDIM1),ICUTS(IDIM1),ICUTE(IDIM1),ICUTW(IDIM1) 
+     >           ,INCYN(IDIM1),INCYS(IDIM1),INCYE(IDIM1),INCYW(IDIM1) 
+     >           ,INPCN(IDIM1),INPCS(IDIM1),INPCE(IDIM1),INPCW(IDIM1)
+      COMMON/BND3/MWALN,MWALS,MWALE,MWALW                               
+     >           ,MSYMN,MSYMS,MSYME,MSYMW                               
+     >           ,MEXIN,MEXIS,MEXIE,MEXIW                               
+     >           ,MINLN,MINLS,MINLE,MINLW,NN 
+     >           ,MCUTN,MCUTS,MCUTE,MCUTW 
+     >           ,MCYCN,MCYCS,MCYCE,MCYCW                           
+     >           ,MPCTN,MPCTS,MPCTE,MPCTW
+     >           ,MFLAG1,MFLAG2,MFLAG3,MFLAG4                           
+      COMMON/BND4/CBND(NRBND,2)   
+      COMMON/SHEAR/TAUWAL(IDIM1,4),YPLUS(IDIM1,4),ap_press(idim1)
+      COMMON/TMOD/D(IDIM1),E(IDIM1),F1(IDIM1),F2(IDIM1),FMU(IDIM1),
+     >   DISTN(IDIM1),almu(IDIM1),aleps(IDIM1),YPLUS_TOT(IDIM1)
+      common/tmod1/turbmod,indw(idim1),iwdir(idim1) 
+
+	common/unst/delt,tinst,ntbeg,ntend,ntstep,ntsb,ntse,ntsint,
+     >              tbeg,ntavg,tempsch,nlevel
+        common/unstgrd/xg(idim1,nbmax),yg(idim1,nbmax),
+     >                 xc(idim1,nbmax),yc(idim1,nbmax)
+
+	common/unstvar/u(idim1,nbmax,maxl),v(idim1,nbmax,maxl),
+     >                 press(idim1,nbmax,maxl),te(idim1,nbmax,maxl),
+     >                 ed(idim1,nbmax,maxl),aom(idim1,nbmax,maxl),
+     >                 vsq(idim1,nbmax,maxl),ffn(idim1,nbmax,maxl),
+     >                 anut(idim1,nbmax,maxl),scal(idim1,nbmax,maxl)
+	common/unstcw/cw_old(idim1,nbmax),cs_old(idim1,nbmax)
+ 	common/unsterr/uerr(nbmax),verr(nbmax),perr(nbmax),
+     >        teerr(nbmax),ederr(nbmax),aomerr(nbmax),
+     >        vsqerr(nbmax),ffnerr(nbmax),anuterr(nbmax),scalerr(nbmax),err_max
+ 	common/splind/ib1,ib2,jb1,jb2
+        common/sepwakestag/wakel,theta(nbmax,20),nsep(nbmax)
+        common/clcd/adfp_pr(3),adff_pr(3),adm_pr(3)    
+        common/sumcoeff/sumdp,sumdf,sumlp,sumlf
+	common/avg/pavg(idim1),uavg(idim1),vavg(idim1),wavg(idim1),
+     >             edavg(idim1),teavg(idim1),aomavg(idim1),
+     >        vsqavg(idim1),ffnavg(idim1),anutavg(idim1),scalavg(idim1)
+        common/extra/app(idim1)
+
+       COMMON/IS/ISCOX,ISCOY,ISX,ISY,ISR,ISFX,ISFY,ISVOLP                
+     >,ISPP,ISU,ISV,ISW,ISWR,ISTE,ISED,ISOM,ISV2,ISF,ISNUT,ISS      
+     >,ISP,ISDEN,ISVIS,ISVISW,ISVISS,ISCW,ISCS                      
+     >,ISB11W,ISB12W,ISB21W,ISB22W
+     >,ISB11S,ISB12S,ISB21S,ISB22S          
+     >,ISB11P,ISB12P,ISB21P,ISB22P     
+     >,ISAW,ISAE,ISAS,ISAN,ISSU,ISSP,ISAP,ISAPU,ISAPV,ISSUMU,ISSUMV
+
+       COMMON/NVIS/NVCOX,NVCOY,NVX,NVY,NVR,NVFX,NVFY,NVVOLP                
+     >,NVPP,NVU,NVV,NVW,NVWR,NVTE,NVED,NVOM,NVV2,NVF,NVNUT,NVS      
+     >,NVP,NVDEN,NVVIS,NVVISW,NVVISS,NVCW,NVCS
+     >,NVUW,NVVW,NVUS,NVVS	
+     >,NVB11W,NVB12W,NVB21W,NVB22W,NVB11S,NVB12S,NVB21S,NVB22S          
+     >,NVB11P,NVB12P,NVB21P,NVB22P     
+     >,NVAW,NVAE,NVAS,NVAN,NVSU,NVSP,NVAP,NVAPU,NVAPV,NVSUMU,NVSUMV

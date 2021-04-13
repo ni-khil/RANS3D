@@ -1,0 +1,26 @@
+ COARSE GRID INFORMATION
+ ------ ---- -----------
+ SOUTH BOUNDARY
+ ----- --------
+ SEGMENT   GRID   STRETCH  STRETCH          GRIDSIZE    GRIDSIZE 
+   NO     POINTS   RATIO    INDEX          AT START    AT END 
+ -------  ------  -------  -------         -------     -------
+     1     101      1.00       2      0.10000E-01      0.10000E-01
+ EAST BOUNDARY
+ ---- --------
+ SEGMENT   GRID   STRETCH  STRETCH          GRIDSIZE    GRIDSIZE 
+   NO     POINTS   RATIO    INDEX          AT START    AT END 
+ -------  ------  -------  -------         -------     -------
+     1     101      1.00       2      0.10000E-01      0.10000E-01
+ NORTH BOUNDARY
+ ----- --------
+ SEGMENT   GRID   STRETCH  STRETCH          GRIDSIZE    GRIDSIZE 
+   NO     POINTS   RATIO    INDEX          AT START    AT END 
+ -------  ------  -------  -------         -------     -------
+     1     101      1.00       2      0.10000E-01      0.10000E-01
+ WEST BOUNDARY
+ ---- --------
+ SEGMENT   GRID   STRETCH  STRETCH          GRIDSIZE    GRIDSIZE 
+   NO     POINTS   RATIO    INDEX          AT START    AT END 
+ -------  ------  -------  -------         -------     -------
+     1     101      1.00       2      0.10000E-01      0.10000E-01
