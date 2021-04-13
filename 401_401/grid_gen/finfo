@@ -1,0 +1,26 @@
+ FINE GRID INFORMATION
+ ------ ---- -----------
+ SOUTH BOUNDARY
+ ----- --------
+ SEGMENT   GRID   STRETCH  STRETCH           GRIDSIZE      GRIDSIZE 
+   NO     POINTS   RATIO    INDEX          AT START      AT END 
+ -------  ------  -------  -------         -------       -------
+     1     201      1.00       2      0.49975E-02      0.49976E-02
+ EAST BOUNDARY
+ ---- --------
+ SEGMENT   GRID   STRETCH  STRETCH           GRIDSIZE      GRIDSIZE 
+   NO     POINTS   RATIO    INDEX          AT START      AT END 
+ -------  ------  -------  -------         -------       -------
+     1     201      1.00       2      0.49975E-02      0.49976E-02
+ NORTH BOUNDARY
+ ----- --------
+ SEGMENT   GRID   STRETCH  STRETCH           GRIDSIZE      GRIDSIZE 
+   NO     POINTS   RATIO    INDEX          AT START      AT END 
+ -------  ------  -------  -------         -------       -------
+     1     201      1.00       2      0.49975E-02      0.49976E-02
+ WEST BOUNDARY
+ ---- --------
+ SEGMENT   GRID   STRETCH  STRETCH           GRIDSIZE      GRIDSIZE 
+   NO     POINTS   RATIO    INDEX          AT START      AT END 
+ -------  ------  -------  -------         -------       -------
+     1     201      1.00       2      0.49975E-02      0.49976E-02

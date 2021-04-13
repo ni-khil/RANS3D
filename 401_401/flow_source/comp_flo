@@ -1,0 +1,2 @@
+gfortran -ffixed-line-length-none flow.f forces.f coeff.f turbul.f lib.f spec_init.f convective_bc.f blockcon.f outbc.f -o jobrun   
+

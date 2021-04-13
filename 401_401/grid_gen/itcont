@@ -1,0 +1,6 @@
+MAXITP  LITER(LAPLACE ITERATION)     CC
+2000          0                1.E-5
+RELAX(1)    RELAX(2)
+0.5         0.5
+OMEGA  FACT_LIM
+0.1      1.0

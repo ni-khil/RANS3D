@@ -1,0 +1,74 @@
+C
+C      EVALUATION OF LOCAL AND AVERAGE NUSSELT NOS.
+C
+C      AS PER THREE POINT FORMULA
+C
+              DO J=1,NJ
+              II1=1+(J-1)*NI
+              II2=II1+1
+              II3=II2+1
+              TL=F(ISS+II1)
+              TR=F(ISS+II2)
+              TRR=F(ISS+II3)
+              XL=F(ISX+II1)
+              XR=F(ISX+II2)
+              XRR=F(ISX+II3)
+              YM(J)=F(ISY+II1)
+              DYDX1=-TL*(XRR+XR)/XR/XRR
+              DYDX2=(XRR*XRR*TR - XR*XR*TRR)/(XR*XRR*(XRR-XR))
+
+              ANUSLT(J)=DYDX1+DYDX2     
+
+              WRITE(55,*)J,YM(J),XL,TL,XR,TR,ABS(ANUSLT(J))
+              END DO
+
+234       FORMAT (4E20.8)
+C
+C      EVALUATION OF  AVERAGE NUSSELT NOS. AT GIVEN I or J LINE
+C
+	SUM=0.
+	ALT=0.
+        READ ***********
+
+	DO J= JWALB,JWALF
+	DO I= IWALB,IWALF
+
+        CALL GRAD(I,J,DEG,DTDX,DTDY)
+
+        END DO
+        END DO
+
+
+
+
+        SUBROUTINE GRAD(ISVAR,I,J,NDEG,A,B)
+C  TO DETERMINE THE SLOPE AT         
+
+        INCLUDE com2d
+
+        IB=I+(J-1)*NI
+        IB1 = IB+1
+
+        IF(NDEG.EQ.1) THEN
+
+
+        END IF
+
+        IF(NDEG.EQ.2) THEN
+        PHI1= F(ISVAR+II) 
+	IJB=I+(J-1)*NI
+	IJT=IJB+NI
+	DY=F(ISY+IJT)-F(ISY+IJB)
+	DX=F(ISX+IJT)-F(ISX+IJB)
+        DS=SQRT(DX*DX+DY*DY)
+        SUM=SUM+ANUSLT(J)*DS
+        ALT=ALT+DS
+        END DO
+
+        AVG_NUSLT=ABS(SUM)
+        WRITE(55,*)'AVERAGE NU =',AVG_NUSLT
+        END DO
+        END DO
+
+
+	

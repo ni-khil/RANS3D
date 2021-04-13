@@ -1,0 +1,34 @@
+-----------------------------------------------------------------
+  PLEASE ENTER THE CONDITIONS BCHECK AND HYBRID
+  BCHECK  HYBRID  
+  .FALSE. .FALSE.
+  HELP FOR GIVING THE INPUT CONDITIONS
+  **** *** ****** *** ***** **********
+
+  FOR BCHECK = .TRUE. } THE RUN IS MEANT FOR CHECKING          
+  *******************   THE BOUNDARY COORDINATES ONLY
+
+  HYBRID = .TRUE.--> BOTH COARSE AND FINE GRID LEVEL INFORMATION
+		             AND XY-COORDS FOR BOTH ARE STORED IN THE
+		             CORRESPONDING FILES
+
+  HYBRID = .FALSE.-->ONLY COARSE GRID INFORMATION AND XY-COORDS 
+                     FOR ONLY COARSE GRID ARE STORED IN THE
+		             CORRESPONDING FILES
+
+  PLEASE CHECK THE FILE 'MESSAGE' AFTER READING BCHECK & HYBRID
+-----------------------------------------------------------------
+  FOR BCHECK = .FALSE. } NO CHECKING INFORMATION     
+  ********************   ARE REQUIRED BY THE USER
+
+  HYBRID = .TRUE.--> GRIDS GENERATED AT  BOTH THE
+                     COARSE AND FINE LEVELS  
+
+  HYBRID = .FALSE.-->GRID GENERATED ONLY AT COARSE LEVEL
+   		             USING POISSON SOLVER.
+
+  PLEASE CHECK THE FILE 'RESIDUE' FOR THE 
+  CONVERGENCE HISTORY OF THE POISSON SOLVER
+
+  PLEASE CHECK THE FILE 'MESSAGE' AFTER THE RUN                 
+  ---------------------------------------------------------(EOF)

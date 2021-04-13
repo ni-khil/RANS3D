@@ -1,0 +1,2 @@
+gfortran -ffixed-line-length-none gridgen.f -o meshgen
+

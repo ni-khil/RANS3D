@@ -1,0 +1,8 @@
+ ntstep,    tinst,   ibswp,  resmax
+           1   0.00000000            2001   1.72089624    
+ ntstep,    tinst,   ibswp,  resmax
+           1   0.00000000            5001  0.593413651    
+ ntstep,    tinst,   ibswp,  resmax
+           1   0.00000000            7001  0.271298856    
+ ntstep,    tinst,   ibswp,  resmax
+           1   0.00000000           10001  0.122753456    

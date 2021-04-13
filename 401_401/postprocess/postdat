@@ -1,0 +1,31 @@
+DOUBLE_PREC
+.FALSE. 
+REYNOLDS NO.   UIN    DENSITY  
+0.71           1.0   	1.0   
+TOTAL NUMBER OF BLOCKS (NBLOK)
+1
+IPREF JPREF IBREF_PR : FOR CALCULATION OF PREF
+201  2   1
+NFILE
+1
+no of x station (no_xstat)
+1
+XGIV(i),iblk(i),i=1,no_xstat
+0.5,1
+no of y station (no_ystat)
+1
+yGIV(i),iblk(i),i=1,no_xstat
+0.5,1  
+ntrec_beg  ntrec_end  ntrec_stp
+1            1          1
+BOUNDARY I & J VALUES FOR BLOCK IDENTIFICATION
+VALUES OF I & J CONFORM TO THE GLOBAL SINGLE GRID
+***  BLOCK 1  ***
+ni  nj
+402  402 
+isolve_b isolve_e jsolve_b jsolve_e
+2       101        2       101
+C   IFLAG = 1 FOR WALL AT NORTH  IFLAG = 2 FOR WALL AT SOUTH
+C   IFLAG = 3 FOR WALL AT EAST   IFLAG = 4 FOR WALL AT WEST
+nwals, (iflag(nw),nw=1,nwals)
+4  1 2 3 4

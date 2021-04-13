@@ -1,0 +1,155 @@
+C**********************************************************************
+C
+CLAMINAR FLOW DUE TO NATURAL CONVECTION IN A DIFFERENTIALLY HEATED SQUARE CAVITY       
+C    
+C   BLOCK INDEPENDENT INPUT DATA FOR MULTIBLOCK VERSION
+C
+C***********************************************************************        
+C
+C ---- TOTAL NUMBER OF BLOCKS
+C
+NBLOCK
+1
+C
+C ---- COMPILATION PRESICION  
+C .TRUE. - FOR DOUBLE PRECISION; .FALSE. FOR SINGLE PRECISION
+DOUBLE_PREC
+.FALSE.
+C
+C  ---  CONVERGENCE CRIT./ MAX ITER.NO./ MAX. BLOCK SWEEPS/DEBUG INDEX
+C
+EPS,  NBSWP_ST NBSWP_END ,IDEBUG,  STOP_JOB
+1.E-4,   7001      10000        1      .FALSE.
+C
+C  ---  BLOCK NUMBER AND I AND J LOCATION FOR MONITORING LOCATION
+C
+IMON JMON,IBMON 
+201   201    1
+C
+C  ---  LOGICAL VARIABLES FOR PROGRAM CONTROL                
+C
+KATO   AXISYM_X, AXISYM_Y,   SWIRL , OVACOR
+.FALSE. .FALSE., .FALSE.,   .FALSE., .FALSE. 
+C
+C  ---  LOGICAL VARIABLES FOR PROGRAM CONTROL                
+C
+START_FIELD SAMEGRID_LEVEL  NATCONV    INIT_FLD  BUOY_SORCE
+.FALSE.         .FALSE.     .TRUE.   .FALSE.     .TRUE.
+C
+C  ---  LOGICAL VARIABLE FOR CONVECTIVE B.C  
+C
+CONVECTIVE_BC(CONVECTIVE BOUNDARY CONDITION) WRITE_EXIT --- LOGICAL VARIABLE
+.FALSE.                                     .FALSE.
+C
+C --- NORMALISATION FACTORS FOR THE GLOBAL RESIDUES
+C
+GNORM(1)  (2)    (3)    (4)   (5)   (6)    (7)   (8)   (9)  (10)  (11)
+  1.0     1.0    1.0    1.0   1.0   1.0    1.0   1.0   1.0  1.0   1.0
+C                                                                               
+C --- EQUATION TO BE SOLVED (.TRUE. WHEN SOLVED / .FALSE. OTHERWISE)        
+C PP      U      V      W      SCALAR 
+SOLVE(1)  (2)    (3)    (4)     (11)
+.TRUE. ,.TRUE.,.TRUE. ,.FALSE.  .TRUE.
+C                                                                               
+C --- MAXIMUM NUMBER OF INNER ITERATIVE SWEEPS                                  
+C                                                                               
+NSWP(1)  (2)    (3)    (4)    (5)      (6)     (7)    (8)   (9)  (10)  (11)
+10,       1,     1,     1,     1,       1,      1,     1,    1,    1,    1
+C                                                                               
+C --- TYPE OF PRESSURE-VELOCITY LINK USED                                  
+C     LINKPV = 1 FOR SIMPLE AND = 2 FOR SIMPLEC
+C                                                                               
+LINKPV
+1                         
+C                                                                               
+C --- RELAX FOR   PP, U , V , W , K , ED, OM, V2, F, NUT,S,  P, DEN,VIS         
+C     USE RELAX(12) = 1. - RELAX(2) FOR SIMPLE ( LINKPV = 1 )
+C     USE RELAX(12) = 1. FOR SIMPLEC (LINKPV = 2)
+C                                                                               
+RELAX (1)  (2)  (3)  (4)  (5)  (6)  (7)  (8)  (9)  (10)  (11)  (12) (13) (14)
+      1.0, 0.8, 0.8, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5,  0.8,  0.8, 0.2,  1.0  1.0
+C                                                                               
+C --- SOLVER: 1-ADI, 2-SIP                       
+C                                                                               
+NSOLV(1)  (2)    (3)    (4)    (5)      (6)     (7)    (8)    (9)  (10) (11)
+      2,   2,     2,     2,     2,       2,      2      2      2    2     2    
+C                                                                               
+C --- CONVECTION SCHEME: 1-HYBRID, 2-QUICK, 3-HLPA, 4-CENTRAL DIFFERENCE
+C                        5 - SECOND ORDER UPWIND 
+C                             
+NDSCH(1)  (2)    (3)    (4)    (5)   (6)     (7)   (8)   (9)    (10) (11)
+      1,   5      5     1      1     1       1     1     1      1    5      
+C                                                                               
+C --- CONVECTION SCHEME: FACTOR FOR DEFERRED CORRECTION APPROACCH               
+C                                                                               
+FDEFER(1)  (2)    (3)    (4)    (5)   (6)    (7)   (8)   (9)    (10)  (11)
+     0.0,  1.0    1.0   0.0,   0.0,  0.0,   0.0,  0.0,   0.0,   0.0    0.0      
+C                                                                               
+C --- FLOW CONDITIONS                                                           
+C                                                                               
+DENSIT, VISIN_FACT  ALREF  UREF    VREF  TREF  TEREF    ALPHA
+  1.00,    10.       1.    1.000    0.0   0.   0.0001    0.
+C                                                                               
+C --- TURBULENCE MODEL                                                       
+TURBMOD(=0:LAM,=1:STD-WAL,=2:2-LAYER,=3:CHIEN,=4:K-OMEGA,=5:V2F,=6:SA,=7:SST)
+0   
+C                                                                               
+C--DIFF DISSIPATION FN: C_EPS=1 f(k,v2)/ =2 f(smin/L)/ =3 exp(smin,k/viscos)    
+C REAL_IND = TRUE FOR REALIZABILITY = FALSE OTHERWISE
+C_EPS  REAL_IND    
+1       .TRUE.   
+C
+C --- REYNOLDS NUMBER, LAMINAR PRANDTL NUMBER, RAYLEIGH NUMBER
+C
+REYNOLDS NO.     PRLAM      RAYLEIGH NO.
+1.40             0.71            1.E+05
+C                                                                               
+C --- PRANDTL NUMBERS FOR DIFFERENT VARIABLES                                   
+C                                                                               
+PR(1)  (2)    (3)    (4)    (5)      (6)     (7)   (8)   (9)  (10) (11)
+1.,     1.,    1.,    1.,    1.,     1.,    1.,    1.,   1.,   1.,  1.,
+C
+C ---SPFACT FACTORS FOR ENSURING NEGATIVE SP IN SOURCE TERMS
+C
+SPFACT(1)   (2)   (3)   (4)   (5)   (6)   (7)     (8)    (9)   (10)  (11) 
+        0,    0,    0,    0,    1,    1,   0,      0,     0,    0,    0
+C
+C     INPUT DATA FOR TIME STEPPING
+C
+DELT    NTBEG  NTEND  tbeg
+1.E+20    1     1      0.
+C
+C     INPUT DATA FOR FIELD STORAGE
+C
+NTSB    NTSE     NTSINT
+9999    9999      11 
+C
+C     INPUT TIME STEP FROM WHICH PHI AVERAGING IS RQUIRED 
+C
+NTAVG
+2020
+C
+C --- TEMPORAL DISCRETISATION SCHEME: 1- FIRST ORDER, 2- SECOND ORDER
+C
+TEMPSCH
+1
+C
+C  SPECIAL INPUT FOR BLUFF BODY FOR FORCE COMPUTATION
+C  (I & J INDEX IDENTIFYING THE BLUFF BODY WALLS)
+IB1    IB2      JB1    JB2  
+33      69       31     67    
+C
+C PITCHING AMPLITUDE AND PITCHING FREQUENCY
+C
+C PITCH_AMP(DEG)   PITCH_FREQ (Reduced Freq k=OMEGA*C/2*U_INF=RAD/SEC)
+  8.0                0.0
+C
+C HINGE COORDINATES
+C
+C X_HINGE     Y_HINGE
+   -0.25         0.
+C
+C  VELOCITY OF THE GRID FOR TRANSLATION
+C
+C U_GRID        V_GRID
+    0.           0.
